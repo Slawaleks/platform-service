@@ -1,11 +1,8 @@
 package org.example.db;
 
 import org.example.model.Meeting;
-import org.postgresql.jdbc.PgArray;
 
-import javax.sql.rowset.serial.SerialArray;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MeetingDbclient {

@@ -1,11 +1,23 @@
 package org.example.db;
 
+import org.example.configuration.DataSource;
 import org.example.model.User;
 
 import java.sql.*;
 import java.util.regex.Pattern;
 
 public class UserDbClient {
+
+    Connection connection;
+
+    public UserDbClient() {
+        try {
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1qaz");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     public long addUser(User newUser) throws SQLException {
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1qaz")) {
@@ -20,7 +32,7 @@ public class UserDbClient {
     }
 
     public User getUserById(Long id) throws SQLException {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1qaz")) {
+        try (Connection connection = DataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT username, email FROM public.user where id = ?");
             preparedStatement.setLong(1, id);
             preparedStatement.execute();
@@ -44,13 +56,13 @@ public class UserDbClient {
 
 
     public void updateUser(Long id, User user) throws SQLException {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "1qaz")) {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE public.user SET username = ?, email = ? WHERE id = ?");
-            preparedStatement.setLong(3, id);
-            preparedStatement.setString(1, user.getUserName());
-            preparedStatement.setString(2, user.getEmail());
-            preparedStatement.execute();
-        }
+
+        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE public.user SET username = ?, email = ? WHERE id = ?");
+        preparedStatement.setLong(3, id);
+        preparedStatement.setString(1, user.getUserName());
+        preparedStatement.setString(2, user.getEmail());
+        preparedStatement.execute();
+
     }
 //    public static <EmailValidator> boolean emailValidator(String email) {
 //
